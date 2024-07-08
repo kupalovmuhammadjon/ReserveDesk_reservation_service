@@ -1,50 +1,46 @@
 package config
 
 import (
-	"fmt"
+	"log"
+	"os"
+
 	"github.com/joho/godotenv"
 	"github.com/spf13/cast"
-	"os"
 )
 
 type Config struct {
-	ReservationServicePort string
-
-	PostgresHost     string
-	PostgresPort     int
-	PostgresUser     string
-	PostgresPassword string
-	PostgresDatabase string
-
-	LOG_PATH string
+	HTTP_PORT                string
+	Reservation_SERVICE_PORT string
+	DB_HOST                  string
+	DB_PORT                  string
+	DB_USER                  string
+	DB_PASSWORD              string
+	DB_NAME                  string
 }
 
-func Load() Config {
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("No .env file found")
+func Load() *Config {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	config := Config{}
+	config := &Config{}
 
-	config.ReservationServicePort = cast.ToString(coalesce("HTTP_PORT", ":8081"))
-
-	config.PostgresHost = cast.ToString(coalesce("DB_HOST", "localhost"))
-	config.PostgresPort = cast.ToInt(coalesce("DB_PORT", 5433))
-	config.PostgresUser = cast.ToString(coalesce("DB_USER", "postgres"))
-	config.PostgresPassword = cast.ToString(coalesce("DB_PASSWORD", "1111"))
-	config.PostgresDatabase = cast.ToString(coalesce("DB_NAME", "user"))
-
-	config.LOG_PATH = cast.ToString(coalesce("LOG_PATH", "logs/info.log"))
+	config.HTTP_PORT = cast.ToString(coalesce("HTTP_PORT", 8080))
+	config.Reservation_SERVICE_PORT = cast.ToString(coalesce("USER_SERVICE_PORT", 7777))
+	config.DB_HOST = cast.ToString(coalesce("DB_HOST", "localhost"))
+	config.DB_PORT = cast.ToString(coalesce("DB_PORT", 5432))
+	config.DB_USER = cast.ToString(coalesce("DB_USER", "postgres"))
+	config.DB_PASSWORD = cast.ToString(coalesce("DB_PASSWORD", "root"))
+	config.DB_NAME = cast.ToString(coalesce("DB_NAME", "user_management"))
 
 	return config
 }
 
-func coalesce(key string, defaultValue interface{}) interface{} {
+func coalesce(key string, value interface{}) interface{} {
 	val, exists := os.LookupEnv(key)
-
 	if exists {
 		return val
 	}
-
-	return defaultValue
+	return value
 }
