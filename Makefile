@@ -1,27 +1,35 @@
-CURRENT_DIR=$(shell pwd)
+CURRENT_DIR := $(shell pwd)
+DATABASE_URL="postgres://postgres:root@localhost:5432/reservedesk_auth_service?sslmode=disable"
 
-proto-gen:
-	./scripts/gen-proto.sh ${CURRENT_DIR}
+runserver:
+	@go run cmd/router/server.go
 
-exp:
-	export DBURL='postgres://postgres:0509@localhost:5432/reja?sslmode=disable'
+runservice:
+	@go run cmd/service/service.go
 
-mig-up:
-	migrate -database 'postgres://postgres:0509@localhost:5432/reja?sslmode=disable' -path migrations up
-mig-down:
-	migrate -database 'postgres://postgres:0509@localhost:5432/reja?sslmode=disable' -path migrations down
+gen-proto:
+	@./scripts/gen-proto.sh $(CURRENT_DIR)
 
-
+tidy:
+	@go mod tidy
 
 mig-create:
-	migrate create -ext sql -dir migrations -seq create_courier
+	@if [ -z "$(name)" ]; then \
+		read -p "Enter migration name: " name; \
+	fi; \
+	migrate create -ext sql -dir migrations -seq $$name
 
-mig-insert:
-	migrate create -ext sql -dir db/migrations -seq insert_table
+mig-up:
+	@migrate -database "$(DATABASE_URL)" -path migrations up
 
+mig-down:
+	@migrate -database "$(DATABASE_URL)" -path migrations down
 
-# mig-force:
-#  	migrate -database 'postgres://postgres:0509@localhost:5432/reja?sslmode=disable' -path migration force 1
+mig-force:
+	@if [ -z "$(version)" ]; then \
+		read -p "Enter migration version: " version; \
+	fi; \
+	migrate -database "$(DATABASE_URL)" -path migrations force $$version
 
-mig-foce:
-	migrate -database 'postgres://postgres:0509@localhost:5432/reja?sslmode=disable' -path migrations force 1
+permission:
+	@chmod +x scripts/gen-proto.sh
