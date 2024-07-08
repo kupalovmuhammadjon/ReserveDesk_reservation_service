@@ -1,5 +1,5 @@
 CURRENT_DIR := $(shell pwd)
-DATABASE_URL="postgres://postgres:root@localhost:5432/reservedesk_auth_service?sslmode=disable"
+DATABASE_URL="postgres://postgres:root@localhost:5432/reservedesk_reservation_service?sslmode=disable"
 
 runserver:
 	@go run cmd/router/server.go
