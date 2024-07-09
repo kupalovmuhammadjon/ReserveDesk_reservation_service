@@ -1,8 +1,6 @@
 # Hozirgi direktoriyani saqlaydi
 CURRENT_DIR := $(shell pwd)
-
-# Ma'lumotlar bazasiga ulanish manzili
-DATABASE_URL="postgres://postgres:0509@localhost:5432/reservedesk_reservation_service?sslmode=disable"
+DATABASE_URL="postgres://postgres:root@localhost:5432/reservedesk_reservation_service?sslmode=disable"
 
 # Serverni ishga tushiradi
 runserver:
