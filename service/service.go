@@ -1,5 +1,5 @@
 package service
 
-type ReservationService struct{
+type OrderService struct{
 	
 }
