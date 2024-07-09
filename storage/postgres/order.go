@@ -35,13 +35,13 @@ func (o *OrderRepo) UpdateOrder(req *pb.Updateorder) error {
 	return nil
 }
 
-func (o *OrderRepo) DeleteOrder(id *pb.Id) error {
-	_, err := uuid.Parse(id.Id)
+func (o *OrderRepo) DeleteOrder(rep *pb.Id) error {
+	_, err := uuid.Parse(rep.Id)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
 		return err
 	}
-	_, err = o.Db.Exec("update order set delete_at=$1 where id=$2", time.Now(), id)
+	_, err = o.Db.Exec("update order set delete_at=$1 where id=$2", time.Now(), rep.Id)
 	if err != nil {
 		return err
 	}
