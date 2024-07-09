@@ -24,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type RestaurantClient interface {
 	CreateRestaurant(ctx context.Context, in *RestaurantCreate, opts ...grpc.CallOption) (*Void, error)
 	GetRestaurants(ctx context.Context, in *RestaurantFilter, opts ...grpc.CallOption) (*Restaurants, error)
-	GetRestaurantById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Restaurants, error)
+	GetRestaurantById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*RestaurantInfo, error)
 	UpdateRestaurant(ctx context.Context, in *RestaurantUpdate, opts ...grpc.CallOption) (*Void, error)
 	DeleteRestaurant(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Void, error)
 }
@@ -55,8 +55,8 @@ func (c *restaurantClient) GetRestaurants(ctx context.Context, in *RestaurantFil
 	return out, nil
 }
 
-func (c *restaurantClient) GetRestaurantById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Restaurants, error) {
-	out := new(Restaurants)
+func (c *restaurantClient) GetRestaurantById(ctx context.Context, in *Id, opts ...grpc.CallOption) (*RestaurantInfo, error) {
+	out := new(RestaurantInfo)
 	err := c.cc.Invoke(ctx, "/restaurant.Restaurant/GetRestaurantById", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func (c *restaurantClient) DeleteRestaurant(ctx context.Context, in *Id, opts ..
 type RestaurantServer interface {
 	CreateRestaurant(context.Context, *RestaurantCreate) (*Void, error)
 	GetRestaurants(context.Context, *RestaurantFilter) (*Restaurants, error)
-	GetRestaurantById(context.Context, *Id) (*Restaurants, error)
+	GetRestaurantById(context.Context, *Id) (*RestaurantInfo, error)
 	UpdateRestaurant(context.Context, *RestaurantUpdate) (*Void, error)
 	DeleteRestaurant(context.Context, *Id) (*Void, error)
 	mustEmbedUnimplementedRestaurantServer()
@@ -104,7 +104,7 @@ func (UnimplementedRestaurantServer) CreateRestaurant(context.Context, *Restaura
 func (UnimplementedRestaurantServer) GetRestaurants(context.Context, *RestaurantFilter) (*Restaurants, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRestaurants not implemented")
 }
-func (UnimplementedRestaurantServer) GetRestaurantById(context.Context, *Id) (*Restaurants, error) {
+func (UnimplementedRestaurantServer) GetRestaurantById(context.Context, *Id) (*RestaurantInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRestaurantById not implemented")
 }
 func (UnimplementedRestaurantServer) UpdateRestaurant(context.Context, *RestaurantUpdate) (*Void, error) {
