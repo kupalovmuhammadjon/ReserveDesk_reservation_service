@@ -18,28 +18,28 @@ func NewOrderService(db *sql.DB) *OrderService {
 	}
 }
 
-func (u *OrderService) CreateOrder(ctx context.Context, req *pb.Order) error {
-	err := u.Repo.CreateOrder(req)
+func (u *OrderService) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Void, error) {
+	_, err := u.Repo.CreateOrder(req)
 	if err != nil{
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (u *OrderService) UpdateOrder(ctx context.Context, rep *pb.Updateorder) error {
-	err := u.Repo.UpdateOrder(rep)
+func (u *OrderService) UpdateOrder(ctx context.Context, rep *pb.Updateorder) (*pb.Void, error) {
+	_, err := u.Repo.UpdateOrder(rep)
 	if err != nil{
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return  &pb.Void{}, nil
 }
 
-func (u *OrderService) DeleteOrder(ctx context.Context, rep *pb.Id) error {
-	err := u.Repo.DeleteOrder(rep)
+func (u *OrderService) DeleteOrder(ctx context.Context, rep *pb.Id) (*pb.Void, error) {
+	_, err := u.Repo.DeleteOrder(rep)
 	if err != nil{
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
 func (u *OrderService) GetOrderById(ctx context.Context, rep *pb.Id) (*pb.OrderInfo, error) {

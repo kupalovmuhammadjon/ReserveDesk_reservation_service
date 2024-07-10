@@ -19,33 +19,33 @@ func NewOrderRepo(db *sql.DB) *OrderRepo {
 	return &OrderRepo{Db: db}
 }
 
-func (o *OrderRepo) CreateOrder(req *pb.Order) error {
+func (o *OrderRepo) CreateOrder(req *pb.Order) (*pb.Void, error) {
 	_, err := o.Db.Exec("insert into orders(reservation_id, menu_item_id, quantity, created_at) values($1, $2, $3, $4)", req.ReservationId, req.MenuItemId, req.Quantity, time.Now())
 	if err != nil {
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (o *OrderRepo) UpdateOrder(req *pb.Updateorder) error {
+func (o *OrderRepo) UpdateOrder(req *pb.Updateorder) (*pb.Void, error) {
 	_, err := o.Db.Exec("update orders set reservation_id=$1, menu_item_id=$2, quantity=$3, updated_at=$4 where id=$5", req.ReservationId, req.MenuItemId, req.Quantity, time.Now(), )
 	if err != nil {
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (o *OrderRepo) DeleteOrder(rep *pb.Id) error {
+func (o *OrderRepo) DeleteOrder(rep *pb.Id) (*pb.Void, error) {
 	_, err := uuid.Parse(rep.Id)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
-		return err
+		return &pb.Void{},err
 	}
 	_, err = o.Db.Exec("update order set delete_at=$1 where id=$2", time.Now(), rep.Id)
 	if err != nil {
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
 func (o *OrderRepo) GetOrderById(id *pb.Id) (*pb.OrderInfo, error) {
