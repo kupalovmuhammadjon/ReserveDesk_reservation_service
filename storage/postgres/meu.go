@@ -19,33 +19,33 @@ func NewMenuRepo(db *sql.DB) *MenuRepo{
 	return &MenuRepo{Db: db}
 } 
 
-func (o *MenuRepo) CreateMenu(rep *pb.MenuRequest) error {
+func (o *MenuRepo) CreateMenu(rep *pb.MenuRequest) (*pb.Void, error) {
 	_, err := o.Db.Exec("insert into menu(item_type, name, price, descriptioon, created_at) values($1, $2, $3, $4, $5)", rep.ItemType, rep.Name, rep.Price, rep.Description, time.Now())
 	if err != nil{
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (o *MenuRepo) UpdateMenu(rep *pb.MenuUpateRequest) error {
+func (o *MenuRepo) UpdateMenu(rep *pb.MenuUpateRequest) (*pb.Void, error) {
 	_, err := o.Db.Exec("update menu set item_type=$1, name=$2, price=$3, descriptioon=$4, restaurant_id=$5, updated_at=$6 where id=$7", rep.ItemType, rep.Name, rep.Price, rep.Description, rep.RestaurantId, time.Now(), rep.Id)
 	if err != nil{
-		return err
+		return &pb.Void{}, err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (o *MenuRepo) DeleteMenu(rep *pb.Id) error {
+func (o *MenuRepo) DeleteMenu(rep *pb.Id) (*pb.Void, error) {
 	_, err := uuid.Parse(rep.Id)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
-		return err
+		return &pb.Void{},err
 	}
 	_, err = o.Db.Exec("update menu set delete_at=$1 where id=$2", time.Now(), rep.Id)
 	if err != nil {
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
 func (o *MenuRepo) GetByIdMenu(rep *pb.Id) (*pb.MenuResponse, error) {

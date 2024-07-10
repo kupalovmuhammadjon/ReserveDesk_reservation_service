@@ -18,14 +18,30 @@ func NewRestaurantService(db *sql.DB) RestaurantService {
 	}
 }
 
-func (u RestaurantService) CreateRestaurant(ctx context.Context, req *pb.RestaurantCreate) (*pb.Void, error) {
-	err := u.Repo.CreateRestaurant(req)
+
+func (u *RestaurantService) CreateRestaurant(ctx context.Context, req *pb.RestaurantCreate) (*pb.Void, error) {
+	_, err := u.Repo.CreateRestaurant(req)
 	if err != nil {
-		return nil, err
+		return &pb.Void{},err
 	}
-	return &pb.Void{}, nil
+	return &pb.Void{},nil
 }
 
+func (u *RestaurantService) UpdateRestaurant(ctx context.Context, rep *pb.RestaurantUpdate) (*pb.Void, error) {
+	_, err := u.Repo.UpdateRestaurant(rep)
+	if err != nil {
+		return &pb.Void{},err
+	}
+	return &pb.Void{},nil
+} 
+
+func (u *RestaurantService) DeleteRestaurant(ctx context.Context, rep *pb.Id) (*pb.Void, error) {
+	_, err := u.Repo.DeleteRestaurant(rep)
+	if err != nil {
+		return &pb.Void{},err
+	}
+	return &pb.Void{},nil
+}
 
 func (u *RestaurantService) GetRestaurants(ctx context.Context, req *pb.RestaurantFilter) (*pb.Restaurants, error) {
 	resp, err := u.Repo.GetRestaurants(req)
@@ -41,20 +57,4 @@ func (u *RestaurantService) GetRestaurantById(rep *pb.Id) (*pb.RestaurantInfo, e
 		return nil, err
 	}
 	return resp, nil
-}
-
-func (u *RestaurantService) UpdateRestaurant(ctx context.Context, rep *pb.RestaurantUpdate) error {
-	err := u.Repo.UpdateRestaurant(rep)
-	if err != nil {
-		return err
-	}
-	return nil
-} 
-
-func (u *RestaurantService) DeleteRestaurant(ctx context.Context, rep *pb.Id) error {
-	err := u.Repo.DeleteRestaurant(rep)
-	if err != nil {
-		return err
-	}
-	return nil
 }

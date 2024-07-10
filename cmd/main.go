@@ -7,8 +7,9 @@ import (
 	"reservation_service/config"
 	pbrev "reservation_service/genproto/reservations"
 
-	// pbm "reservation_service/genproto/menu"
-	// pbr "reservation_service/genproto/restaurant"
+	pbm "reservation_service/genproto/menu"
+	pbr "reservation_service/genproto/restaurant"
+	pbo "reservation_service/genproto/order"
 	"reservation_service/pkg/logger"
 	"reservation_service/service"
 	"reservation_service/storage/postgres"
@@ -44,8 +45,8 @@ func main() {
 	server := grpc.NewServer()
 
 	pbrev.RegisterReservationServiceServer(server, service.NewReservationService(db, cfg))
-	// pbr.RegisterRestaurantServer(server, service.NewRestaurantService(db))
-	// pbm.RegisterMenuServiceServer(server, service.NewMenuService(db))
+	pbr.RegisterRestaurantServer(server, service.NewRestaurantService(db))
+	pbm.RegisterMenuServiceServer(server, service.NewMenuService(db))
 
 	err = server.Serve(listener)
 	if err != nil{

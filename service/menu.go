@@ -18,28 +18,30 @@ func NewMenuService(db *sql.DB) MenuService {
 	}
 }
 
-func (u *MenuService) CreateMenu(ctx context.Context, req *pb.MenuRequest) error {
-	err := u.Repo.CreateMenu(req)
-	if err != nil {
-		return err
+func (u *MenuService) CreateMenu(ctx context.Context, req *pb.MenuRequest) (*pb.Void, error) {
+	_, err := u.Repo.CreateMenu(req)
+	if err != nil{
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (u *MenuService) UpdateMenu(ctx context.Context, rep *pb.MenuUpateRequest) error {
-	err := u.Repo.UpdateMenu(rep)
-	if err != nil {
-		return err
+
+func (u *MenuService) UpdateMenu(ctx context.Context, rep *pb.MenuUpateRequest) (*pb.Void, error) {
+	_, err := u.Repo.UpdateMenu(rep)
+	if err != nil{
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (u *MenuService) DeleteMenu(ctx context.Context, rep *pb.Id) error {
-	err := u.Repo.DeleteMenu(rep)
-	if err != nil {
-		return err
+
+func (u *MenuService) DeleteMenu(ctx context.Context, rep *pb.Id) (*pb.Void, error) {
+	_, err := u.Repo.DeleteMenu(rep)
+	if err != nil{
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
 func (u *MenuService) GetByIdMenu(ctx context.Context, rep *pb.Id) (*pb.MenuResponse, error) {
