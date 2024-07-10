@@ -12,18 +12,35 @@ type RestaurantService struct {
 	Repo *postgres.RestaurantRepo
 }
 
-func NewRestaurantService(db *sql.DB) *RestaurantService {
-	return &RestaurantService{
+func NewRestaurantService(db *sql.DB) RestaurantService {
+	return RestaurantService{
 		Repo: postgres.NewRestaurantRepo(db),
 	}
 }
 
-func (u *RestaurantService) CreateRestaurant(ctx context.Context, req *pb.RestaurantCreate) error {
+func (u RestaurantService) CreateRestaurant(ctx context.Context, req *pb.RestaurantCreate) (*pb.Void, error) {
 	err := u.Repo.CreateRestaurant(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &pb.Void{}, nil
+}
+
+
+func (u *RestaurantService) GetRestaurants(ctx context.Context, req *pb.RestaurantFilter) (*pb.Restaurants, error) {
+	resp, err := u.Repo.GetRestaurants(req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (u *RestaurantService) GetRestaurantById(rep *pb.Id) (*pb.RestaurantInfo, error) {
+	resp, err := u.Repo.GetRestaurantById(rep)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 func (u *RestaurantService) UpdateRestaurant(ctx context.Context, rep *pb.RestaurantUpdate) error {
@@ -40,20 +57,4 @@ func (u *RestaurantService) DeleteRestaurant(ctx context.Context, rep *pb.Id) er
 		return err
 	}
 	return nil
-}
-
-func (u *RestaurantService) GetRestaurants(ctx context.Context, req *pb.RestaurantFilter) (*pb.Restaurants, error) {
-	resp, err := u.Repo.GetRestaurants(req)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-func (u *RestaurantService) GetRestaurantById(rep *pb.Id) (*pb.RestaurantInfo, error) {
-	resp, err := u.Repo.GetRestaurantById(rep)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
 }

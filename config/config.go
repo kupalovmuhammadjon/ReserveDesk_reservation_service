@@ -10,7 +10,7 @@ import (
 
 type Config struct {
 	HTTP_PORT                string
-	Reservation_SERVICE_PORT string
+	RESERVATION_SERVICE_PORT string
 	DB_HOST                  string
 	DB_PORT                  string
 	DB_USER                  string
@@ -26,13 +26,13 @@ func Load() *Config {
 
 	config := &Config{}
 
-	config.HTTP_PORT = cast.ToString(coalesce("HTTP_PORT", 8080))
-	config.Reservation_SERVICE_PORT = cast.ToString(coalesce("RESERVATION_SERVICE", 7777))
+	config.HTTP_PORT = cast.ToString(coalesce("HTTP_PORT", ":8080"))
+	config.RESERVATION_SERVICE_PORT = cast.ToString(coalesce("RESERVATION_SERVICE", ":7777"))
 	config.DB_HOST = cast.ToString(coalesce("DB_HOST", "localhost"))
 	config.DB_PORT = cast.ToString(coalesce("DB_PORT", 5432))
 	config.DB_USER = cast.ToString(coalesce("DB_USER", "postgres"))
 	config.DB_PASSWORD = cast.ToString(coalesce("DB_PASSWORD", "root"))
-	config.DB_NAME = cast.ToString(coalesce("DB_NAME", "user_management"))
+	config.DB_NAME = cast.ToString(coalesce("DB_NAME", "smth"))
 
 	return config
 }
