@@ -19,41 +19,41 @@ func NewRestaurantRepo(db *sql.DB) *RestaurantRepo {
 	return &RestaurantRepo{Db: db}
 }
 
-func (r *RestaurantRepo) CreateRestaurant(req *pb.RestaurantCreate) error {
+func (r *RestaurantRepo) CreateRestaurant(req *pb.RestaurantCreate) (*pb.Void, error) {
 	_, err := r.Db.Exec("insert into restaurants(name, address, total_avb_seats, phone_number, description, created_at) values($1, $2, $3, $4, $5, $6)",
 		req.Name, req.Address, req.TotalAvbSeats, req.PhoneNumber, req.Description, time.Now())
 
 	if err != nil {
 		log.Fatal("Create query failed: ", err)
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (r *RestaurantRepo) UpdateRestaurant(restaurant *pb.RestaurantUpdate) error {
+func (r *RestaurantRepo) UpdateRestaurant(restaurant *pb.RestaurantUpdate) (*pb.Void, error) {
 	_, err := r.Db.Exec("update restaurants set name=$1, address=$2, total_avb_seats=$3, phone_number=$4, description=$5, updated_at=$6 where id=$7",
 		restaurant.Name, restaurant.Address, restaurant.TotalAvbSeats, restaurant.PhoneNumber, restaurant.Description, time.Now(), restaurant.Id)
 	if err != nil {
 		log.Println("Update query failed: ", err)
-		return err
+		return &pb.Void{},err
 	}
-	return nil
+	return &pb.Void{},nil
 }
 
-func (r *RestaurantRepo) DeleteRestaurant(id *pb.Id) error {
+func (r *RestaurantRepo) DeleteRestaurant(id *pb.Id) (*pb.Void, error) {
 	_, err := uuid.Parse(id.Id)
 	if err != nil {
 		log.Printf("Error parsing UUID: %v", err)
-		return err
+		return &pb.Void{},err
 	}
 	_, err = r.Db.Exec("update restaurants set deleted_at=$1 where id=$2", time.Now(), id)
 
 	if err != nil {
 		log.Fatal("Delete query failed: ", err)
-		return err
+		return &pb.Void{},err
 	}
 
-	return nil
+	return &pb.Void{},nil
 }
 
 func (r *RestaurantRepo) GetRestaurantById(id *pb.Id) (*pb.RestaurantInfo, error) {

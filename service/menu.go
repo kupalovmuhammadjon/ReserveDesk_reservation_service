@@ -19,7 +19,7 @@ func NewMenuService(db *sql.DB) *MenuService{
 }
 
 func (u *MenuService) CreateMenu(ctx context.Context, req *pb.MenuRequest) error {
-	err := u.Repo.CreateMenu(req)
+	_, err := u.Repo.CreateMenu(req)
 	if err != nil{
 		return err
 	}
@@ -27,7 +27,7 @@ func (u *MenuService) CreateMenu(ctx context.Context, req *pb.MenuRequest) error
 }
 
 func (u *MenuService) UpdateMenu(ctx context.Context, rep *pb.MenuUpateRequest) error {
-	err := u.Repo.UpdateMenu(rep)
+	_, err := u.Repo.UpdateMenu(rep)
 	if err != nil{
 		return err
 	}
@@ -35,7 +35,7 @@ func (u *MenuService) UpdateMenu(ctx context.Context, rep *pb.MenuUpateRequest) 
 }
 
 func (u *MenuService) DeleteMenu(ctx context.Context, rep *pb.Id) error {
-	err := u.Repo.DeleteMenu(rep)
+	_, err := u.Repo.DeleteMenu(rep)
 	if err != nil{
 		return err
 	}

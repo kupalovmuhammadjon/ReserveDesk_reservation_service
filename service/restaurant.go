@@ -19,7 +19,7 @@ func NewRestaurantService(db *sql.DB) *RestaurantService {
 }
 
 func (u *RestaurantService) CreateRestaurant(ctx context.Context, req *pb.RestaurantCreate) error {
-	err := u.Repo.CreateRestaurant(req)
+	_, err := u.Repo.CreateRestaurant(req)
 	if err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func (u *RestaurantService) CreateRestaurant(ctx context.Context, req *pb.Restau
 }
 
 func (u *RestaurantService) UpdateRestaurant(ctx context.Context, rep *pb.RestaurantUpdate) error {
-	err := u.Repo.UpdateRestaurant(rep)
+	_, err := u.Repo.UpdateRestaurant(rep)
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func (u *RestaurantService) UpdateRestaurant(ctx context.Context, rep *pb.Restau
 } 
 
 func (u *RestaurantService) DeleteRestaurant(ctx context.Context, rep *pb.Id) error {
-	err := u.Repo.DeleteRestaurant(rep)
+	_, err := u.Repo.DeleteRestaurant(rep)
 	if err != nil {
 		return err
 	}
