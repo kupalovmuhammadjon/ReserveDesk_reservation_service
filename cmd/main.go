@@ -47,6 +47,7 @@ func main() {
 	pbrev.RegisterReservationServiceServer(server, service.NewReservationService(db, cfg))
 	pbr.RegisterRestaurantServer(server, service.NewRestaurantService(db))
 	pbm.RegisterMenuServiceServer(server, service.NewMenuService(db))
+	pbo.RegisterOrderServiceServer(server, service.NewOrderService(db))
 
 	err = server.Serve(listener)
 	if err != nil{
