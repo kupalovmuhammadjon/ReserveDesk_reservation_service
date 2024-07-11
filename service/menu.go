@@ -9,7 +9,7 @@ import (
 
 type MenuService struct {
 	pb.UnimplementedMenuServiceServer
-	Repo *postgres.MenuR
+	Repo *postgres.M
 }
 
 func NewMenuService(db *sql.DB) MenuService {
