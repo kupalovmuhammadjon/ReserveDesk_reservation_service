@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func CreateReservationManagementClient(cfg *config.Config) pbu.AuthClient {
+func CreateReservationClient(cfg *config.Config) pbu.AuthClient {
 	conn, err := grpc.NewClient(cfg.Reservation_SERVICE_PORT,
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
