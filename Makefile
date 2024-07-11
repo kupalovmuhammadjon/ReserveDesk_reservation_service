@@ -3,12 +3,9 @@ CURRENT_DIR := $(shell pwd)
 DATABASE_URL="postgres://postgres:0509@localhost:5432/project?sslmode=disable"
 
 # Serverni ishga tushiradi
-runserver:
-	@go run cmd/router/server.go
+run:
+	@go run cmd/main.go
 
-# Xizmatni ishga tushiradi
-runservice:
-	@go run cmd/service/service.go
 
 # Protobuf fayllarni generatsiya qiladi
 gen-proto:

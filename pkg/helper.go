@@ -4,13 +4,15 @@ import (
 	"errors"
 	"log"
 	"reservation_service/config"
-	 pbu "reservation_service/genproto/auth"
+	pbu "reservation_service/genproto/auth"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 func CreateReservationClient(cfg *config.Config) pbu.AuthClient {
-	conn, err := grpc.NewClient(cfg.Reservation_SERVICE_PORT,
+
+	conn, err := grpc.NewClient(cfg.RESERVATION_SERVICE_PORT,
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Println(errors.New("failed to connect to the address: " + err.Error()))

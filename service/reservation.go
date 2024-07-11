@@ -2,8 +2,11 @@ package service
 
 import (
 	"context"
+	"database/sql"
+	"reservation_service/config"
 	pbu "reservation_service/genproto/auth"
 	pb "reservation_service/genproto/reservations"
+	"reservation_service/pkg"
 	"reservation_service/storage/postgres"
 
 	"github.com/google/uuid"
@@ -15,8 +18,11 @@ type ReservationService struct {
 	pb.UnimplementedReservationServiceServer
 }
 
-func NewReservationService(reservation *postgres.ReservationRepo, auth pbu.AuthClient) *ReservationService {
-	return &ReservationService{Reservation: reservation, AuthClient: auth}
+func NewReservationService(db *sql.DB, cfg *config.Config) *ReservationService {
+	
+	return &ReservationService{
+		Reservation: postgres.NewReservationRepo(db), 
+		AuthClient: pkg.CreateReservationClient(cfg)}
 }
 
 func (r *ReservationService) CreateReservation(cntx context.Context, req *pb.Reservation) (*pb.Void, error) {
