@@ -1,6 +1,6 @@
 # Hozirgi direktoriyani saqlaydi
 CURRENT_DIR := $(shell pwd)
-DATABASE_URL="postgres://postgres:0509@localhost:5432/project?sslmode=disable"
+DATABASE_URL="postgres://postgres:0509@localhost:5432/reservation_service?sslmode=disable"
 
 # Serverni ishga tushiradi
 run:

@@ -36,7 +36,7 @@ CREATE TABLE menu (
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
     reservation_id UUID REFERENCES reservations(id),
-    menu_item_id UUID REFERENCES menu(id),
+    menu_items UUID[],
     quantity INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT current_timestamp,
     updated_at TIMESTAMP DEFAULT current_timestamp,

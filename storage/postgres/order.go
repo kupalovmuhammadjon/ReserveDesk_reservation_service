@@ -3,10 +3,11 @@ package postgres
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	pb "reservation_service/genproto/order"
 	"time"
 
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 type OrderRepo struct {
@@ -17,33 +18,44 @@ func NewOrderRepo(db *sql.DB) OrderRepo {
 	return OrderRepo{Db: db}
 }
 
-func (o *OrderRepo) CreateOrderInfo(req *pb.Order) error {
-	_, err := o.Db.Exec("insert into orders(reservation_id, menu_item_id, quantity, created_at) values($1, $2, $3, $4)", req.ReservationId, req.MenuItemId, req.Quantity, time.Now())
-	if err != nil {
-		return err
+func (o *OrderRepo) CreateOrder(req *pb.Order) (*pb.Void, error) {
+	ids := []string{}
+	for _, item := range req.Items {
+		ids = append(ids, item.MenuId)
 	}
-	return nil
+	_, err := o.Db.Exec(`insert into orders(reservation_id, menu_items, quantity, created_at) 
+	values($1, $2, $3, $4)`, req.ReservationId, ids, req.Quantity, time.Now())
+	if err != nil {
+		return &pb.Void{}, err
+	}
+	return &pb.Void{}, nil
 }
 
-func (o *OrderRepo) UpdateOrderInfo(req *pb.Order, id string) error {
-	_, err := o.Db.Exec("update orders set reservation_id=$1, menu_item_id=$2, quantity=$3, updated_at=$4 where id=$5", req.ReservationId, req.MenuItemId, req.Quantity, time.Now(), id)
+func (o *OrderRepo) UpdateOrder(req *pb.Updateorder) (*pb.Void, error) {
+	_, err := o.Db.Exec("update orders set reservation_id=$1, menu_items=$2, quantity=$3, updated_at=$4 where id=$5", req.ReservationId, req.Items, req.Quantity, time.Now())
 	if err != nil {
-		return err
+		return &pb.Void{}, err
 	}
-	return nil
+	return &pb.Void{}, nil
 }
 
-func (o *OrderRepo) DeleteOrderInfo(id *pb.Id) error {
-	_, err := o.Db.Exec("update order set delete_at=$1 where id=$2", time.Now(), id)
+func (o *OrderRepo) DeleteOrderInfo(rep *pb.Id) (*pb.Void, error) {
+	_, err := o.Db.Exec("update order set delete_at=$1 where id=$2", time.Now(), rep.Id)
 	if err != nil {
-		return err
+		log.Printf("Error parsing UUID: %v", err)
+		return &pb.Void{}, err
 	}
-	return nil
+	_, err = o.Db.Exec("update order set delete_at=$1 where id=$2", time.Now(), rep.Id)
+	if err != nil {
+		return &pb.Void{}, err
+	}
+	return &pb.Void{}, nil
 }
 
-func (o *OrderRepo) GetByIdOrder(id *pb.Id) (*pb.OrderInfo, error) {
+func (o *OrderRepo) GetByIdOrder(req *pb.Id) (*pb.OrderInfo, error) {
 	resp := pb.OrderInfo{}
-	err := o.Db.QueryRow("select * from orders where id=$1", id).Scan(&resp.ReservationId, &resp.MenuItemId, &resp.Quantity, &resp.CreatedAt, &resp.UpdatedAt)
+
+	err := o.Db.QueryRow("select * from orders where id=$1", req.Id).Scan(&resp.ReservationId, pq.Array(&resp.Items), &resp.Quantity, &resp.CreatedAt, &resp.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -54,11 +66,11 @@ func (o *OrderRepo) GetByIdOrder(id *pb.Id) (*pb.OrderInfo, error) {
 func (o *OrderRepo) GetAllOrder(req *pb.OrderFilter) (*pb.Orders, error) {
 	var params []interface{}
 
-	query := "select id,reservation_id,menu_item_id ,quantity, created_at, updated_at from orders where  deleted_at is null "
+	query := "select id,reservation_id, menu_items ,quantity, created_at, updated_at from orders where  deleted_at is null "
 
-	if len(req.MenuItemId) > 0 {
-		params = append(params, req.MenuItemId)
-		query += fmt.Sprintf(" and menu_item_id = $%d", len(params))
+	if len(req.Items) > 0 {
+		params = append(params, req.Items)
+		query += fmt.Sprintf(" and menu_items = $%d", len(params))
 
 	}
 	if len(req.ReservationId) > 0 {
@@ -90,7 +102,7 @@ func (o *OrderRepo) GetAllOrder(req *pb.OrderFilter) (*pb.Orders, error) {
 	var orders pb.Orders
 	for rows.Next() {
 		var order pb.OrderInfo
-		err := rows.Scan(&order.Id, &order.ReservationId, &order.MenuItemId, &order.Quantity, &order.CreatedAt, &order.UpdatedAt)
+		err := rows.Scan(&order.Id, &order.ReservationId, pq.Array(&order.Items), &order.Quantity, &order.CreatedAt, &order.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
